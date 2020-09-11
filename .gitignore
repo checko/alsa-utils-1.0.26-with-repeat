@@ -44,4 +44,24 @@ speaker-test/samples/Makefile
 utils/Makefile
 utils/alsa-utils.spec
 version
+alsaconf/po/ja.gmo
+alsaconf/po/ru.gmo
+alsactl/alsa-restore.service
+alsactl/alsa-store.service
+alsactl/alsactl
+alsactl/alsactl_init.7
+alsaloop/alsaloop
+alsaucm/alsaucm
+amidi/amidi
+amixer/amixer
+aplay/aplay
+autom4te.cache/
+iecset/iecset
+include/aconfig.h.in~
+seq/aconnect/aconnect
+seq/aplaymidi/aplaymidi
+seq/aplaymidi/arecordmidi
+seq/aseqdump/aseqdump
+seq/aseqnet/aseqnet
+speaker-test/speaker-test
 
