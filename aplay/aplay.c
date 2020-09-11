@@ -131,6 +131,7 @@ static int use_strftime = 0;
 volatile static int recycle_capture_file = 0;
 static long term_c_lflag = -1;
 static int dump_hw_params = 0;
+static int repeatplay = 0;
 
 static int fd = -1;
 static off64_t pbrec_count = LLONG_MAX, fdcount;
@@ -428,7 +429,7 @@ enum {
 int main(int argc, char *argv[])
 {
 	int option_index;
-	static const char short_options[] = "hnlLD:qt:c:f:r:d:MNF:A:R:T:B:vV:IPCi";
+	static const char short_options[] = "bhnlLD:qt:c:f:r:d:MNF:A:R:T:B:vV:IPCi";
 	static const struct option long_options[] = {
 		{"help", 0, 0, 'h'},
 		{"version", 0, 0, OPT_VERSION},
@@ -469,6 +470,7 @@ int main(int argc, char *argv[])
 		{"interactive", 0, 0, 'i'},
 		{"dump-hw-params", 0, 0, OPT_DUMP_HWPARAMS},
 		{"fatal-errors", 0, 0, OPT_FATAL_ERRORS},
+		{"repleat play", 0, 0, 'b'},
 		{0, 0, 0, 0}
 	};
 	char *pcm_name = "default";
@@ -508,6 +510,9 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1) {
 		switch (c) {
+		case 'b':
+			repeatplay = 1;
+			break;
 		case 'h':
 			usage(command);
 			return 0;
@@ -2530,7 +2535,12 @@ static void playback(char *name)
 	/* read bytes for WAVE-header */
 	if ((dtawave = test_wavefile(fd, audiobuf, dta)) >= 0) {
 		pbrec_count = calc_count();
+		off_t position = lseek(fd, 0, SEEK_CUR);
 		playback_go(fd, dtawave, pbrec_count, FORMAT_WAVE, name);
+		while(repeatplay) {
+			lseek(fd, 0, SEEK_SET);
+			playback_go(fd, dtawave, pbrec_count, FORMAT_WAVE, name);
+		}
 	} else {
 		/* should be raw data */
 		init_raw_data();
